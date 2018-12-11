@@ -1,8 +1,17 @@
-let db = [];
+let db = [{
+    id: 'gq57UMCYYgxMOnLkhKcYJK0SY0EyMUnU8h1b',
+    firstName: 'James',
+    lastName: 'Aren',
+    company: 'Epam',
+    position: 'Software Engineer',
+    email: 'lala@g,ail.com',
+    phoneNumber: '0604 449343 343'
+
+}];
 
 function makeId() {
-    let id = "";
-    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let id = '';
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     for (let i = 0; i < 36; i++)
         id += possible.charAt(Math.floor(Math.random() * possible.length));
