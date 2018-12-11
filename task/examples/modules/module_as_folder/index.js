@@ -1,0 +1,1 @@
+console.log('module from folder loaded');
