@@ -3,7 +3,7 @@ const db = require('./fake-db');
 const port = 3000;
 
 const handleError = (code, errText, res) => {
-  console.log(errText);
+  console.error(errText);
 
   res.writeHead(code, errText);
   res.end();
@@ -159,6 +159,14 @@ const server = new Server((req, res) => {
     default:
       handleError(404, 'Not Found', res);
   }
+});
+
+server.on('error', err => {
+  if (err.code === 'EADDRINUSE') {
+    return console.error(`ERROR: Port ${port} is in use.`);
+  }
+
+  console.error(err.message);
 });
 
 server.listen(port, () => {
