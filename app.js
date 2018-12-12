@@ -1,5 +1,4 @@
 const { Server } = require('http');
-const qs = require('querystring');
 const db = require('./fake-db');
 const port = 3000;
 
@@ -29,13 +28,29 @@ const handleGETRequest = (url, res) => {
   res.end();
 };
 
-const handlePOSTRequest = (url, res) => {
-  if (url === '/api/users') {
+const handlePOSTRequest = (req, res) => {
+  if (req.url === '/api/users') {
+    let body = '';
 
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+
+    req.on('end', () => {
+      const bodyObj = JSON.parse(body);
+      if (bodyObj instanceof Object) {
+        db.create(bodyObj, (err, user) => {
+          res.end(JSON.stringify(user));
+        });
+      } else {
+        res.writeHead(400, 'Invalid data');
+        res.end();
+      }
+    });
+  } else {
+    res.writeHead(404, 'Not Found');
+    res.end();
   }
-
-  res.writeHead(404, 'Not Found');
-  res.end();
 };
 
 const handlePUTRequest = () => {
@@ -53,19 +68,8 @@ const server = new Server((req, res) => {
 
       break;
     case 'POST':
-      let body = '';
-      req.on('data', chunk => {
-        body += chunk;
-      });
-      //console.log(body);
-      console.log(qs.parse(body));
-      req.on('end', () => {
-        const formData = qs.parse(body);
-        //res.write(formData);
-        console.log(formData);
-        res.end();
-      });
-      //handlePOSTRequest(req.url, res);
+      handlePOSTRequest(req, res);
+
       break;
     case 'PUT':
       handlePUTRequest(res);
