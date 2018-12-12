@@ -13,7 +13,7 @@ const handleGETRequest = (req, res) => {
   if (req.url === '/api/users') {
     db.getCollection((err, collection) => {
       if (err) {
-        handleError(500, err, res);
+        handleError(500, err.message, res);
       }
 
       res.end(JSON.stringify(collection));
@@ -23,7 +23,7 @@ const handleGETRequest = (req, res) => {
 
     db.getById(id, (err, user) => {
       if (err) {
-        handleError(500, err, res);
+        handleError(500, err.message, res);
       }
 
       res.end(JSON.stringify(user));
@@ -36,7 +36,6 @@ const handleGETRequest = (req, res) => {
 const handlePOSTRequest = (req, res) => {
   if (req.url === '/api/users') {
     let data = '';
-
     req.on('error', err => {
       handleError(400, err, res);
     }).on('data', chunk => {
@@ -69,7 +68,7 @@ const handlePOSTRequest = (req, res) => {
           res.end(JSON.stringify(user));
         });
       } catch (err) {
-        handleError(400, err.message, res);
+        handleError(400, err, res);
       }
     });
   } else {
@@ -115,8 +114,7 @@ const handlePUTRequest = (req, res) => {
           res.end(JSON.stringify(user));
         });
       } catch (err) {
-        console.log('here');
-        handleError(400, err.message, res);
+        handleError(400, err, res);
       }
     });
   } else {
@@ -130,7 +128,7 @@ const handleDELETERequest = (req, res) => {
 
     db.remove(id, err => {
       if (err) {
-        handleError(500, err, res);
+        handleError(500, err.message, res);
       }
 
       res.end('OK');
@@ -159,8 +157,7 @@ const server = new Server((req, res) => {
 
       break;
     default:
-      res.writeHead(404, 'Not found');
-      res.end();
+      handleError(404, 'Not Found', res);
   }
 });
 
